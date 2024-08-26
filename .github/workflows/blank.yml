@@ -1,0 +1,14 @@
+# .github/workflows/create_pr_with_gh.yml
+
+name: Create Pull Request using GitHub CLI
+
+on:
+  workflow_dispatch:
+
+jobs:
+  create_pr:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: fabriziocacicia/delete-tags-without-release-action@v0.1.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
