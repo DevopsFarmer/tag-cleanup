@@ -11,23 +11,38 @@ jobs:
       # Step 1: Check out the repository
       - name: Checkout Repository
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # Ensure all tags are fetched
 
-      # Step 2: Set up GitHub CLI
+      # Step 2: Install GitHub CLI
       - name: Install GitHub CLI
         run: |
           sudo apt-get update
           sudo apt-get install gh
 
-      # Step 3: Authenticate GitHub CLI
+      # Step 3: Authenticate with GitHub
       - name: Authenticate with GitHub
         run: |
           gh auth login --with-token <<< "${{ secrets.GH_TOKEN }}"
 
-      # Step 4: Delete Tags that Start with "dev"
-      - name: Delete Tags Starting with "dev"
+      # Step 4: Fetch all tags
+      - name: Fetch all tags
         run: |
-          for tag in $(git tag -l 'dev*'); do
+          git fetch --tags
+
+      # Step 5: List and delete tags starting with "dev"
+      - name: List and Delete Tags
+        run: |
+          echo "Fetching tags starting with 'dev'"
+          dev_tags=$(git tag -l 'dev*')
+          
+          if [ -z "$dev_tags" ]; then
+            echo "No tags found starting with 'dev'"
+            exit 0
+          fi
+
+          for tag in $dev_tags; do
             echo "Deleting tag $tag"
-            git push --delete origin "$tag"
-            git tag -d "$tag"
+            git push --delete origin "$tag" || echo "Failed to delete remote tag $tag"
+            git tag -d "$tag" || echo "Failed to delete local tag $tag"
           done
