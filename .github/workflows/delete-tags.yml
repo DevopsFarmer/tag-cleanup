@@ -1,13 +1,33 @@
-# .github/workflows/create_pr_with_gh.yml
+name: Delete Tags Starting with "dev"
 
-name: Delete Tags
 on:
-  workflow_dispatch:
+  workflow_dispatch: # Manually triggered
 
 jobs:
   delete_tags:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: fabriziocacicia/delete-tags-without-release-action@v0.1.0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+      # Step 1: Check out the repository
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      # Step 2: Set up GitHub CLI
+      - name: Install GitHub CLI
+        run: |
+          sudo apt-get update
+          sudo apt-get install gh
+
+      # Step 3: Authenticate GitHub CLI
+      - name: Authenticate with GitHub
+        run: |
+          gh auth login --with-token <<< "${{ secrets.GH_TOKEN }}"
+
+      # Step 4: Delete Tags that Start with "dev"
+      - name: Delete Tags Starting with "dev"
+        run: |
+          for tag in $(git tag -l 'dev*'); do
+            echo "Deleting tag $tag"
+            git push --delete origin "$tag"
+            git tag -d "$tag"
+          done
