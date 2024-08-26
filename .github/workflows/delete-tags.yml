@@ -1,7 +1,6 @@
 # .github/workflows/create_pr_with_gh.yml
 
-name: Create Pull Request using GitHub CLI
-
+name: Delete Tags
 on:
   workflow_dispatch:
 
