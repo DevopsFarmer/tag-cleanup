@@ -23,8 +23,7 @@ jobs:
       # Step 3: Authenticate with GitHub
       - name: Authenticate with GitHub
         run: |
-          gh auth login --with-token <<< "${{ secrets.GH_TOKEN }}"
-
+          echo "${{ secrets.GH_TOKEN }}" | gh auth login --with-token
       # Step 4: Fetch all tags
       - name: Fetch all tags
         run: |
