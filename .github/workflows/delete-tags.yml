@@ -1,4 +1,4 @@
-name: Delete Tags Starting with "dev"
+name: Delete Tags
 
 on:
   workflow_dispatch: # Manually triggered
